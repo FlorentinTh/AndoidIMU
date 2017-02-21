@@ -30,6 +30,7 @@ import ca.uqac.liara.androidimu.R;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
+    private static final int SAMPLING_RATE = 60;
     private static final String FILENAME = "IMU";
     private static final long TIMEOUT = 1000;
     private static final int REQUEST_EXTERNAL_STORAGE_PERMISSION = 100;
@@ -215,10 +216,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_STATUS_ACCURACY_HIGH);
-        sensorManager.registerListener(this, gyroscope, SensorManager.SENSOR_STATUS_ACCURACY_HIGH);
-        sensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_STATUS_ACCURACY_HIGH);
+        sensorManager.registerListener(this, accelerometer, (SAMPLING_RATE * 1000) - 1000);
+        sensorManager.registerListener(this, gyroscope, (SAMPLING_RATE * 1000) - 1000);
+        sensorManager.registerListener(this, magnetometer, (SAMPLING_RATE * 1000) - 1000);
     }
 
     private void validateInputs(Editable s, TextInputLayout layout) {
