@@ -1,0 +1,14 @@
+<resources>
+    <!-- App -->
+    <string name="app_name">AndroidIMU</string>
+    <string name="popup_titles">Houston, we have a problem!</string>
+    <!-- Main Activity -->
+    <string name="hiking_name_hint">Hiking name</string>
+    <string name="sensor_location_hint">Sensor location</string>
+    <string name="username_hint">Username</string>
+    <string name="hiking_name_input_invalid">Hiking name cannot be empty  and greater than 20.</string>
+    <string name="sensor_location_input_invalid">Sensor location cannot be empty  and greater than 20.</string>
+    <string name="username_input_invalid">Username cannot be empty and greater than 20.</string>
+    <string name="device_deconnected_message">Bluetooth device is no longer connected.</string>
+    <string name="alert_external_storage_permission_denied_message">External storage access denied. The app may not works as expected.</string>
+</resources>
