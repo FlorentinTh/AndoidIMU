@@ -33,14 +33,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final int SAMPLING_RATE = 60;
     private static final String FILENAME = "IMU";
     private static final long TIMEOUT = 1000;
-    private static final int REQUEST_EXTERNAL_STORAGE_PERMISSION = 100;
+    private static final int PERMISSIONS_REQUEST = 100;
 
     private FileManager fileManager;
 
     private SensorManager sensorManager;
     private Sensor accelerometer, gyroscope, magnetometer;
 
-    private Object[] data = new Object[12];
+    float[] gravity, geomatic;
+
+
+    private Object[] data = new Object[15];
 
     private TextInputLayout hikingNameLayout, sensorLocationLayout, usernameLayout;
     private TextInputEditText hikingNameInput, sensorLocationInput, usernameInput;
@@ -86,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     data[0] = event.values[0];
                     data[1] = event.values[1];
                     data[2] = event.values[2];
+                    gravity = event.values;
                     break;
                 case Sensor.TYPE_GYROSCOPE:
                     data[3] = event.values[0];
@@ -96,14 +100,29 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     data[6] = event.values[0];
                     data[7] = event.values[1];
                     data[8] = event.values[2];
+                    geomatic = event.values;
                     break;
+            }
+
+            if (gravity != null && geomatic != null) {
+                float R[] = new float[9];
+                float I[] = new float[9];
+                boolean success = SensorManager.getRotationMatrix(R, I, gravity, geomatic);
+
+                if (success) {
+                    float orientation[] = new float[3];
+                    SensorManager.getOrientation(R, orientation);
+                    data[9] = Math.toDegrees(orientation[0]);
+                    data[10] = Math.toDegrees(orientation[1]);
+                    data[11] = Math.toDegrees(orientation[2]);
+                }
             }
         }
 
         if (isStart) {
-            data[9] = hikingNameInput.getText().toString();
-            data[10] = usernameInput.getText().toString();
-            data[11] = sensorLocationInput.getText().toString();
+            data[12] = hikingNameInput.getText().toString();
+            data[13] = usernameInput.getText().toString();
+            data[14] = sensorLocationInput.getText().toString();
 
             fileManager.write(data);
         }
@@ -308,8 +327,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void checkRuntimePermission() {
-        if (this.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_EXTERNAL_STORAGE_PERMISSION);
+        if (this.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            }, PERMISSIONS_REQUEST);
         }
     }
 
@@ -318,10 +341,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         switch (requestCode) {
-            case REQUEST_EXTERNAL_STORAGE_PERMISSION:
+            case PERMISSIONS_REQUEST:
                 if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     showAlertDialog(getResources().getString(R.string.popup_titles),
-                            getResources().getString(R.string.alert_external_storage_permission_denied_message));
+                            getResources().getString(R.string.alert_permission_denied_message));
                 }
                 break;
         }

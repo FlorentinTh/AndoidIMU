@@ -25,7 +25,7 @@ public class FileConfiguration {
 
     public String getFormat() { return format; }
 
-    private String[] headers = {"acc_x", "acc_y", "acc_z", "gyr_x", "gyr_y", "gyr_z", "magn_x", "magn_y", "magn_z", "floor", "people", "sensor_location"};
+    private String[] headers = {"acc_x", "acc_y", "acc_z", "gyr_x", "gyr_y", "gyr_z", "magn_x", "magn_y", "magn_z", "azimuth", "pitch", "roll", "floor", "people", "sensor_location"};
 
     public String[] getHeaders() {
         return headers;
